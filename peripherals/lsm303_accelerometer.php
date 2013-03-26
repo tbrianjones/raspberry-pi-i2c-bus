@@ -99,9 +99,9 @@
 		}
 		
 		public function get_acceleration() {
-			$accel['x'] = $this->read_signed_short( $this->out_x_l, $this->out_x_h ) / ( $this->resolution_marks / $this->resolution );
-			$accel['y'] = $this->read_signed_short( $this->out_y_l, $this->out_y_h ) / ( $this->resolution_marks / $this->resolution );
-			$accel['z'] = $this->read_signed_short( $this->out_z_l, $this->out_z_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['x'] = $this->read_signed_short( $this->out_x_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['y'] = $this->read_signed_short( $this->out_y_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['z'] = $this->read_signed_short( $this->out_z_h ) / ( $this->resolution_marks / $this->resolution );
 			$this->acceleration = $accel;
 			return $this->acceleration;
 		}

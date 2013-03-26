@@ -70,7 +70,7 @@
 
 			// calculate altitude and re
 			return array(
-				'temperature'	=> $this->t * 0.1,
+				'temperature'	=> $this->t,
 				'pressure'		=> $this->p,
 				'altitude'		=> $this->a
 			);
@@ -83,17 +83,17 @@
 		private function read_calibration_data()
 		{
 			
-			$this->ac1 = $this->read_signed_short( 0xab, 0xaa );
-			$this->ac2 = $this->read_signed_short( 0xad, 0xac );
-			$this->ac3 = $this->read_signed_short( 0xaf, 0xae );
-			$this->ac4 = $this->read_unsigned_short( 0xb1, 0xb0 );
-			$this->ac5 = $this->read_unsigned_short( 0xb3, 0xb2 );
-			$this->ac6 = $this->read_unsigned_short( 0xb5, 0xb4 );
-			$this->b1 = $this->read_signed_short( 0xb7, 0xb6 );
-			$this->b2 = $this->read_signed_short( 0xb9, 0xb8 );
-			$this->mb = $this->read_signed_short( 0xbb, 0xba );
-			$this->mc = $this->read_signed_short( 0xbd, 0xbc );
-			$this->md = $this->read_signed_short( 0xbf, 0xbe );
+			$this->ac1 = $this->read_signed_short( 0xaa );
+			$this->ac2 = $this->read_signed_short( 0xac );
+			$this->ac3 = $this->read_signed_short( 0xae );
+			$this->ac4 = $this->read_unsigned_short( 0xb0 );
+			$this->ac5 = $this->read_unsigned_short( 0xb2 );
+			$this->ac6 = $this->read_unsigned_short( 0xb4 );
+			$this->b1 = $this->read_signed_short( 0xb6 );
+			$this->b2 = $this->read_signed_short( 0xb8 );
+			$this->mb = $this->read_signed_short( 0xba );
+			$this->mc = $this->read_signed_short( 0xbc );
+			$this->md = $this->read_signed_short( 0xbe );
 			
 			if( $this->debug_mode ) {
 				echo "\nac1: " . $this->ac1;
@@ -114,7 +114,7 @@
 		private function read_uncompensated_temperature() {
 			$this->write_register( 0xf4, 0x2e );
 			usleep( 4500 );
-			$this->ut = $this->read_unsigned_short( 0xf7, 0xf6 );
+			$this->ut = $this->read_unsigned_short( 0xf6 );
 			if( $this->debug_mode )
 				echo "\nut:  " . $this->ut;
 		}
@@ -122,7 +122,7 @@
 		private function read_uncompensated_pressure() {
 			$this->write_register( 0xf4, 0x34 );
 			usleep( 4500 );
-			$this->up = $this->read_unsigned_long( 0xf8, 0xf7, 0xf6 );
+			$this->up = $this->read_unsigned_long( 0xf6 );
 			if( $this->debug_mode )
 				echo "\nut:  " . $this->up;
 		}
@@ -134,6 +134,7 @@
 			$x2 = $this->mc * pow( 2, 11 ) / ( $x1 + $this->md );
 			$b5 = $x1 + $x2;
 			$this->t = ( $b5 + 8 ) / pow( 2, 4 );
+			$this->t = $this->t * 0.1; // convert to celcius
 			if( $this->debug_mode )
 				echo "\nt:   " . $this->t;
 				
@@ -142,17 +143,18 @@
 			$x1 = ( $this->b2 * ( $b6 * $b6 / pow( 2, 12 ) ) ) / pow( 2, 11 );
 			$x2 = $this->ac2 * $b6 / pow( 2, 11 );
 			$x3 = $x1 + $x2;
-			$b3 = ( ( $this->ac1 * 4 + $x3 ) << 2 ) / 4;
+			$b3 = ( ( $this->ac1 * 4 + $x3 ) << 2 ) / 4;								// check the bitshift
 			$x1 = $this->ac3 * $b6 / pow( 2, 13 );
 			$x2 = ( $this->b1 * ( $b6 * $b6 / pow( 2, 12 ) ) ) / pow( 2, 16 );
 			$x3 = ( ( $x1 + $x2 ) + 2 ) / pow( 2, 2 );
-			$b4 = $this->ac4 * ( $x3 + 32768 ) / pow( 2, 15 );
-			$b7 = ( $this->up - $b3 ) * ( 50000 );
+			$b4 = $this->ac4 * ( $x3 + 32768 ) / pow( 2, 15 );							// check the unsigned long note on docs
+			$b7 = ( $this->up - $b3 ) * ( 50000 );										// ditto, and the bitshift
 			if( $b7 < 0x80000000 )
 				$p = ( $b7 * 2 ) / $b4;
 			else
 				$p = ( $b7 / $b4 ) * 2;
 			$x1 = ( $p / pow( 2, 8 ) ) * ( $p / pow( 2, 8 ) );
+			$x1 = ( $x1 * 3038 ) / pow( 2, 16 );
 			$x2 = ( -7357 * $p ) / pow( 2, 16 );
 			$this->p = $p + ( $x1 + $x2 + 3791 ) / pow( 2, 4 );
 			if( $this->debug_mode )

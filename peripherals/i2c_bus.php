@@ -48,11 +48,10 @@
 		}
 				
 		protected function read_signed_short(
-			$lsb_register,	// least significant byte ( register location )
-			$msb_register	// most significant byte
+			$msb_register	// most significant byte register location
 		) {
-			$lsb = intval( $this->read_register( $lsb_register ), 16 );
 			$msb = intval( $this->read_register( $msb_register ), 16 );
+			$lsb = intval( $this->read_register( $msb_register + 1 ), 16 );
 			$val = ( $msb << 8 ) + $lsb;
 			$array = unpack( 's', pack( 'v', $val ) );
 			$decimal_value = $array[1];
@@ -60,11 +59,10 @@
 		}
 		
 		protected function read_unsigned_short(
-			$lsb_register,	// least significant byte ( register location )
-			$msb_register	// most significant byte
+			$msb_register	// most significant byte register location
 		) {
-			$lsb = intval( $this->read_register( $lsb_register ), 16 );
 			$msb = intval( $this->read_register( $msb_register ), 16 );
+			$lsb = intval( $this->read_register( $msb_register + 1 ), 16 );
 			$val = ( $msb << 8 ) + $lsb;
 			$array = unpack( 'S', pack( 'v', $val ) );
 			$decimal_value = $array[1];
@@ -72,13 +70,11 @@
 		}
 		
 		protected function read_unsigned_long(
-			$xlsb_register,	// x least significant byte ( not sure what the x stands for )
-			$lsb_register,	// least significant byte ( register location )
-			$msb_register	// most significant byte
+			$msb_register	// most significant byte register location
 		) {
-			$xlsb = intval( $this->read_register( $xlsb_register ), 16 );
-			$lsb = intval( $this->read_register( $lsb_register ), 16 );
 			$msb = intval( $this->read_register( $msb_register ), 16 );
+			$lsb = intval( $this->read_register( $msb_register + 1 ), 16 );
+			$xlsb = intval( $this->read_register( $msb_register + 2 ), 16 );
 			$val = ( $msb << 16 ) + ( $lsb << 8 ) + $xlsb;
 			$array = unpack( 'S', pack( 'v', $val ) );
 			$decimal_value = $array[1];
