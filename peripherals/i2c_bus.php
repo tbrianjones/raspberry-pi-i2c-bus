@@ -47,7 +47,7 @@
 			return trim( shell_exec( 'i2cget -y ' . $this->block . ' ' . $this->slave_i2c_register . ' ' . $register ) );
 		}
 				
-		protected function read_16_bit_signed(
+		protected function read_signed_short(
 			$lsb_register,	// least significant byte ( register location )
 			$msb_register	// most significant byte
 		) {
@@ -59,7 +59,7 @@
 			return $decimal_value;
 		}
 		
-		protected function read_16_bit_unsigned(
+		protected function read_unsigned_short(
 			$lsb_register,	// least significant byte ( register location )
 			$msb_register	// most significant byte
 		) {

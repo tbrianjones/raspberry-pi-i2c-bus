@@ -83,17 +83,17 @@
 		private function read_calibration_data()
 		{
 			
-			$this->ac1 = $this->read_16_bit_signed( 0xab, 0xaa );
-			$this->ac2 = $this->read_16_bit_signed( 0xad, 0xac );
-			$this->ac3 = $this->read_16_bit_signed( 0xaf, 0xae );
-			$this->ac4 = $this->read_16_bit_unsigned( 0xb1, 0xb0 );
-			$this->ac5 = $this->read_16_bit_unsigned( 0xb3, 0xb2 );
-			$this->ac6 = $this->read_16_bit_unsigned( 0xb5, 0xb4 );
-			$this->b1 = $this->read_16_bit_signed( 0xb7, 0xb6 );
-			$this->b2 = $this->read_16_bit_signed( 0xb9, 0xb8 );
-			$this->mb = $this->read_16_bit_signed( 0xbb, 0xba );
-			$this->mc = $this->read_16_bit_signed( 0xbd, 0xbc );
-			$this->md = $this->read_16_bit_signed( 0xbf, 0xbe );
+			$this->ac1 = $this->read_signed_short( 0xab, 0xaa );
+			$this->ac2 = $this->read_signed_short( 0xad, 0xac );
+			$this->ac3 = $this->read_signed_short( 0xaf, 0xae );
+			$this->ac4 = $this->read_unsigned_short( 0xb1, 0xb0 );
+			$this->ac5 = $this->read_unsigned_short( 0xb3, 0xb2 );
+			$this->ac6 = $this->read_unsigned_short( 0xb5, 0xb4 );
+			$this->b1 = $this->read_signed_short( 0xb7, 0xb6 );
+			$this->b2 = $this->read_signed_short( 0xb9, 0xb8 );
+			$this->mb = $this->read_signed_short( 0xbb, 0xba );
+			$this->mc = $this->read_signed_short( 0xbd, 0xbc );
+			$this->md = $this->read_signed_short( 0xbf, 0xbe );
 			
 			if( $this->debug_mode ) {
 				echo "\nac1: " . $this->ac1;
@@ -114,7 +114,7 @@
 		private function read_uncompensated_temperature() {
 			$this->write_register( 0xf4, 0x2e );
 			usleep( 4500 );
-			$this->ut = $this->read_16_bit_unsigned( 0xf7, 0xf6 );
+			$this->ut = $this->read_unsigned_short( 0xf7, 0xf6 );
 			if( $this->debug_mode )
 				echo "\nut:  " . $this->ut;
 		}
@@ -142,7 +142,7 @@
 			$x1 = ( $this->b2 * ( $b6 * $b6 / pow( 2, 12 ) ) ) / pow( 2, 11 );
 			$x2 = $this->ac2 * $b6 / pow( 2, 11 );
 			$x3 = $x1 + $x2;
-			$b3 = ( ( $this->ac1 * 4 + $x3 ) << 2 ) / 4 ;
+			$b3 = ( ( $this->ac1 * 4 + $x3 ) << 2 ) / 4;
 			$x1 = $this->ac3 * $b6 / pow( 2, 13 );
 			$x2 = ( $this->b1 * ( $b6 * $b6 / pow( 2, 12 ) ) ) / pow( 2, 16 );
 			$x3 = ( ( $x1 + $x2 ) + 2 ) / pow( 2, 2 );
