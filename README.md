@@ -5,7 +5,8 @@ TBJs Raspberry Pi PHP Tools
 
 problems, bugs, and dev notes
 -----------------------------
-- not sure how to trigger the accelerometer to start producing data. i currently need to trigger it with a third party c app.
+- not sure how to trigger the accelerometer to start producing data. i currently need to trigger it with a third party c app ( ../LSM303DLHC/LSM303 ).
+- change naming convention in classes to follow read/write to boards, and get/set within classes
 
 
 notes about using this library

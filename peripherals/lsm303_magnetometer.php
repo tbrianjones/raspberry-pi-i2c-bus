@@ -95,22 +95,14 @@
 		}
 		
 		public function get_fields() {
-			$this->fields['x'] = $this->get_reading( $this->out_x_l, $this->out_x_h );
-			$this->fields['y'] = $this->get_reading( $this->out_y_l, $this->out_y_h );
-			$this->fields['z'] = $this->get_reading( $this->out_z_l, $this->out_z_h );
+			$this->fields['x'] = $this->read_16_bit_signed( $this->out_x_l, $this->out_x_h );
+			$this->fields['y'] = $this->read_16_bit_signed( $this->out_y_l, $this->out_y_h );
+			$this->fields['z'] = $this->read_16_bit_signed( $this->out_z_l, $this->out_z_h );
 			return $this->fields;
 		}
 		
-		private function get_reading(
-			$lsb_register,	// least significant byte ( register location )
-			$msb_register	// most significant byte
-		) {
-			$lsb = intval( $this->read_register( $lsb_register ), 16 );
-			$msb = intval( $this->read_register( $msb_register ), 16 );
-			$val = ( $msb << 8 ) + $lsb;
-			$array = unpack( 's', pack( 'v', $val ) );
-			$decimal_value = $array[1];
-			return $decimal_value;
+		public function get_heading() {
+			return atan2( $this->fields['y'], $this->fields['y'] );
 		}
 		
 	}

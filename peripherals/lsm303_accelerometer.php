@@ -95,25 +95,13 @@
 		}
 		
 		public function get_acceleration() {
-			$accel['x'] = $this->get_reading( $this->out_x_l, $this->out_x_h ) / ( $this->resolution_marks / $this->resolution );
-			$accel['y'] = $this->get_reading( $this->out_y_l, $this->out_y_h ) / ( $this->resolution_marks / $this->resolution );
-			$accel['z'] = $this->get_reading( $this->out_z_l, $this->out_z_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['x'] = $this->read_16_bit_signed( $this->out_x_l, $this->out_x_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['y'] = $this->read_16_bit_signed( $this->out_y_l, $this->out_y_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['z'] = $this->read_16_bit_signed( $this->out_z_l, $this->out_z_h ) / ( $this->resolution_marks / $this->resolution );
 			$this->acceleration = $accel;
 			return $this->acceleration;
 		}
-		
-		private function get_reading(
-			$lsb_register,	// least significant byte ( register location )
-			$msb_register	// most significant byte
-		) {
-			$lsb = intval( $this->read_register( $lsb_register ), 16 );
-			$msb = intval( $this->read_register( $msb_register ), 16 );
-			$val = ( $msb << 8 ) + $lsb;
-			$array = unpack( 's', pack( 'v', $val ) );
-			$decimal_value = $array[1];
-			return $decimal_value;
-		}
-		
+				
 		public function get_roll() {
 			return atan2( $this->acceleration['y'], sqrt( pow( $this->acceleration['x'], 2 ) + pow( $this->acceleration['z'], 2 ) ) ) * 180 / pi();
 		}

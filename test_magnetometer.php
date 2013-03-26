@@ -11,8 +11,7 @@
 	while( 1 ) {
 		$fields = $Magnet->get_fields();
 		echo "\nFIELDS: " . number_format( $fields['x'], 2 ) . ', ' . number_format( $fields['y'], 2 ) . ', ' . number_format( $fields['z'], 2 );
-//		echo " - ROLL (x): " . number_format( $Magnet->get_roll(), 2 );
-//		echo " - PITCH (y): " . number_format( $Magnet->get_pitch(), 2 );
+		echo " - HEADING: " . number_format( $Magnet->get_heading(), 2 );
 	}
 
 ?>

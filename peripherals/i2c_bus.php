@@ -36,12 +36,44 @@
 		function __destruct() {
 			//pclose( $this->i2c );
 		}
+
+
+	// --- READERS --------------------------------------------------------------------
+	
 		
 		protected function read_register(
 			$register	// register location ( eg. 0x29 )
 		) {
 			return trim( shell_exec( 'i2cget -y ' . $this->block . ' ' . $this->slave_i2c_register . ' ' . $register ) );
 		}
+				
+		protected function read_16_bit_signed(
+			$lsb_register,	// least significant byte ( register location )
+			$msb_register	// most significant byte
+		) {
+			$lsb = intval( $this->read_register( $lsb_register ), 16 );
+			$msb = intval( $this->read_register( $msb_register ), 16 );
+			$val = ( $msb << 8 ) + $lsb;
+			$array = unpack( 's', pack( 'v', $val ) );
+			$decimal_value = $array[1];
+			return $decimal_value;
+		}
+		
+		protected function read_16_bit_unsigned(
+			$lsb_register,	// least significant byte ( register location )
+			$msb_register	// most significant byte
+		) {
+			$lsb = intval( $this->read_register( $lsb_register ), 16 );
+			$msb = intval( $this->read_register( $msb_register ), 16 );
+			$val = ( $msb << 8 ) + $lsb;
+			$array = unpack( 'S', pack( 'v', $val ) );
+			$decimal_value = $array[1];
+			return $decimal_value;
+		}
+		
+		
+	// --- WRITERS --------------------------------------------------------------------
+	
 		
 		protected function set_register(
 			$register,	// register address ( eg. 0x29 )
@@ -49,6 +81,7 @@
 		) {
 			shell_exec( 'i2cset -y ' . $this->block . ' ' . $this->slave_i2c_register . ' ' . $register . ' ' . $value );
 		}
+
 		
 	}
 	
