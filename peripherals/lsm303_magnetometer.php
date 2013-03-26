@@ -8,6 +8,11 @@
 	//	- datasheet: http://www.pololu.com/file/download/LSM303DLHC.pdf?file_id=0J564
 	//	- embedded on the adafruit LSM303 board: http://www.adafruit.com/products/1120
 	//
+	//	DEV NOTES:
+	//		- this is very incomplete
+	//		- writing and reading the resolution doesn't work
+	//		- not sure the magnetometer data is correct ... not sure how to test
+	//		- heading does not work
 	//
 	//
 	class lsm303_magnetometer extends i2c_bus {
@@ -90,7 +95,7 @@
 			// update the settings on the lsm303
 			$settings = str_pad( base_convert( $this->read_register( $this->crb_reg ), 16, 2 ), 8, 0, STR_PAD_LEFT );
 			$settings = substr( $settings, 0, 2 ) . $value . substr( $settings, 4, 4 );
-			$this->set_register( $this->crb_reg, base_convert( $settings, 2, 10 ) );
+			$this->write_register( $this->crb_reg, base_convert( $settings, 2, 10 ) );
 			
 		}
 		

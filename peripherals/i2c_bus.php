@@ -75,7 +75,7 @@
 	// --- WRITERS --------------------------------------------------------------------
 	
 		
-		protected function set_register(
+		protected function write_register(
 			$register,	// register address ( eg. 0x29 )
 			$value		// value to set at register address ( must be a decimal value, eg. 10001001 should be passed as 
 		) {

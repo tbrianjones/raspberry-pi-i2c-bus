@@ -17,6 +17,10 @@
 	//		- rotation around the boards y axis is considered pitch
 	//		- rotation around the boards z axis is considered yaw
 	//
+	//	DEV NOTES
+	//		- yaw cannot be calculated without magnetometer data being incorporated
+	//		- roll and pitch only seem correct when the other is 0.
+	//
 	//
 	class lsm303_accelerometer extends i2c_bus {
 		
@@ -90,7 +94,7 @@
 			// update the settings on the lsm303
 			$settings = str_pad( base_convert( $this->read_register( $this->ctrl_reg4 ), 16, 2 ), 8, 0, STR_PAD_LEFT );
 			$settings = substr( $settings, 0, 2 ) . $value . substr( $settings, 4, 4 );
-			$this->set_register( $this->ctrl_reg4, base_convert( $settings, 2, 10 ) );
+			$this->write_register( $this->ctrl_reg4, base_convert( $settings, 2, 10 ) );
 			
 		}
 		

@@ -65,18 +65,7 @@
 			echo "\n" . $this->md;
 			
 		}
-		
-		public function get_fields() {
-			$this->fields['x'] = $this->read_16_bit_signed( $this->out_x_l, $this->out_x_h );
-			$this->fields['y'] = $this->read_16_bit_signed( $this->out_y_l, $this->out_y_h );
-			$this->fields['z'] = $this->read_16_bit_signed( $this->out_z_l, $this->out_z_h );
-			return $this->fields;
-		}
-		
-		public function get_heading() {
-			return atan2( $this->fields['y'], $this->fields['y'] );
-		}
-		
+				
 	}
 
 ?>
