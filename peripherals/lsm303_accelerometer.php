@@ -5,7 +5,7 @@
 	
 	// i2c communication with the LSM303DLHC Acceleromter ( probably works with the entire LSM303 family )
 	//
-	//	- LSM303DLHC accelerometer ic documentation: http://www.pololu.com/file/download/LSM303DLHC.pdf?file_id=0J564
+	//	- datasheet: http://www.pololu.com/file/download/LSM303DLHC.pdf?file_id=0J564
 	//	- embedded on the adafruit LSM303 board: http://www.adafruit.com/products/1120
 	//
 	//	ORIENTATION ( right hand rule applies based on arrows on board*** )
@@ -42,7 +42,7 @@
 			
 			parent::__construct();
 			
-			// set the default i2c bus location for the LSM303
+			// set the default i2c bus location for the LSM303 accelerometer
 			$this->slave_i2c_register = 0x19;
 			
 		}
@@ -95,9 +95,9 @@
 		}
 		
 		public function get_acceleration() {
-			$accel['x'] = $this->get_reading( $this->out_x_h, $this->out_x_h ) / ( $this->resolution_marks / $this->resolution );
-			$accel['y'] = $this->get_reading( $this->out_y_h, $this->out_y_h ) / ( $this->resolution_marks / $this->resolution );
-			$accel['z'] = $this->get_reading( $this->out_z_h, $this->out_z_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['x'] = $this->get_reading( $this->out_x_l, $this->out_x_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['y'] = $this->get_reading( $this->out_y_l, $this->out_y_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['z'] = $this->get_reading( $this->out_z_l, $this->out_z_h ) / ( $this->resolution_marks / $this->resolution );
 			$this->acceleration = $accel;
 			return $this->acceleration;
 		}
@@ -121,8 +121,6 @@
 		public function get_pitch() {
 			return -1 * atan2( $this->acceleration['x'], sqrt( pow( $this->acceleration['y'], 2 ) + pow( $this->acceleration['z'], 2 ) ) ) * 180 / pi();
 		}
-		
-		
 		
 	}
 

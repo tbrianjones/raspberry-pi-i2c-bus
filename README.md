@@ -3,6 +3,16 @@ TBJs Raspberry Pi PHP Tools
 - php software to interface a raspberry pi with various board level peripherals
 
 
+problems, bugs, and dev notes
+-----------------------------
+- not sure how to trigger the accelerometer to start producing data. i currently need to trigger it with a third party c app.
+
+
+notes about using this library
+------------------------------
+- applications need to be run as root to access the i2c bus
+
+
 required libraries
 ------------------
 
