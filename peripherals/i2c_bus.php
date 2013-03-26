@@ -71,6 +71,20 @@
 			return $decimal_value;
 		}
 		
+		protected function read_unsigned_long(
+			$xlsb_register,	// x least significant byte ( not sure what the x stands for )
+			$lsb_register,	// least significant byte ( register location )
+			$msb_register	// most significant byte
+		) {
+			$xlsb = intval( $this->read_register( $xlsb_register ), 16 );
+			$lsb = intval( $this->read_register( $lsb_register ), 16 );
+			$msb = intval( $this->read_register( $msb_register ), 16 );
+			$val = ( $msb << 16 ) + ( $lsb << 8 ) + $xlsb;
+			$array = unpack( 'S', pack( 'v', $val ) );
+			$decimal_value = $array[1];
+			return $decimal_value;
+		}
+		
 		
 	// --- WRITERS --------------------------------------------------------------------
 	
