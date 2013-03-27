@@ -17,37 +17,37 @@
 	//
 	class lsm303_magnetometer extends i2c_bus {
 		
+		// address of this device on the i2c bus
+		const i2c_address = 0x1e;
+		
 		// raw magnetometer registers
-		private $out_x_l = 0x04;
-		private $out_x_h = 0x03;
-		private $out_y_l = 0x08;
-		private $out_y_h = 0x07;
-		private $out_z_l = 0x06;
-		private $out_z_h = 0x05;
+		const out_x_l = 0x04;
+		const out_x_h = 0x03;
+		const out_y_l = 0x08;
+		const out_y_h = 0x07;
+		const out_z_l = 0x06;
+		const out_z_h = 0x05;
 		
 		// gain setting registers ( resolution )
-		private $crb_reg = 0x01;
+		const crb_reg = 0x01;
 		
-		private $raw_fields = array();	// array containing raw magnetic field data
-		private $fields = array();		// array containing magnetic field data in gauss
+		private $raw_fields = array(); // array containing raw magnetic field data
+		private $fields = array(); // array containing magnetic field data in gauss
 		
 		// resolution
-		private $resolution = 1.3;				// resolution, chip defaults to +/- 1.3 Gauss
-		private $resolution_marks = 32768;
+		private $resolution = 1.3; // resolution, chip defaults to +/- 1.3 Gauss
 		
 		function __construct() {
 			
-			parent::__construct();
-			
-			// set the default i2c bus location for the LSM303 magnetometer
-			$this->slave_i2c_register = 0x1e;
+			// instantiate i2c communication class and pass the default i2c bus address for this device
+			$this->I2c = new i2c_bus( self::i2c_address );
 			
 		}
 		
 		public function get_resolution() {
 			
 			// read settings from register
-			$settings = str_pad( base_convert( $this->read_register( $this->crb_reg ), 16, 2 ), 8, 0, STR_PAD_LEFT );
+			$settings = str_pad( base_convert( $this->I2c->read_register( self::crb_reg ), 16, 2 ), 8, 0, STR_PAD_LEFT );
 			
 			// get resolution bits and translate them
 			$resolution = substr( $settings, 0, 3 );
@@ -93,16 +93,16 @@
 			$this->resolution = $resolution;
 			
 			// update the settings on the lsm303
-			$settings = str_pad( base_convert( $this->read_register( $this->crb_reg ), 16, 2 ), 8, 0, STR_PAD_LEFT );
+			$settings = str_pad( base_convert( $this->I2c->read_register( self::crb_reg ), 16, 2 ), 8, 0, STR_PAD_LEFT );
 			$settings = substr( $settings, 0, 2 ) . $value . substr( $settings, 4, 4 );
-			$this->write_register( $this->crb_reg, base_convert( $settings, 2, 10 ) );
+			$this->write_register( self::crb_reg, base_convert( $settings, 2, 10 ) );
 			
 		}
 		
 		public function get_fields() {
-			$this->fields['x'] = $this->read_signed_short( $this->out_x_h );
-			$this->fields['y'] = $this->read_signed_short( $this->out_y_h );
-			$this->fields['z'] = $this->read_signed_short( $this->out_z_h );
+			$this->fields['x'] = $this->I2c->read_signed_short( self::out_x_h );
+			$this->fields['y'] = $this->I2c->read_signed_short( self::out_y_h );
+			$this->fields['z'] = $this->I2c->read_signed_short( self::out_z_h );
 			return $this->fields;
 		}
 		

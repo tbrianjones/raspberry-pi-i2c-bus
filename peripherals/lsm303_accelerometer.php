@@ -22,39 +22,40 @@
 	//		- roll and pitch only seem correct when the other is 0.
 	//
 	//
-	class lsm303_accelerometer extends i2c_bus {
+	class lsm303_accelerometer {
+		
+		// address of this device on the i2c bus
+		const i2c_address = 0x19;
 		
 		// raw acceleration registers
-		private $out_x_l = 0x28;
-		private $out_x_h = 0x29;
-		private $out_y_l = 0x2a;
-		private $out_y_h = 0x2b;
-		private $out_z_l = 0x2c;
-		private $out_z_h = 0x2d;
+		const out_x_l = 0x28;
+		const out_x_h = 0x29;
+		const out_y_l = 0x2a;
+		const out_y_h = 0x2b;
+		const out_z_l = 0x2c;
+		const out_z_h = 0x2d;
 		
 		// control registers
-		private $ctrl_reg4 = 0x23;
+		const ctrl_reg4 = 0x23;
 		
 		private $raw_acceleration = array();	// array containing raw acceleration data
 		private $acceleration = array();		// array containing acceleration in gs
 		
 		// resolution
 		private $resolution = 2;				// resolution, chip defaults to +/- 2Gs
-		private $resolution_marks = 32768;
+		const resolution_marks = 32768;
 		
 		function __construct() {
 			
-			parent::__construct();
-			
-			// set the default i2c bus location for the LSM303 accelerometer
-			$this->slave_i2c_register = 0x19;
+			// instantiate i2c communication class and pass the default i2c bus address for this device
+			$this->I2c = new i2c_bus( self::i2c_address );
 			
 		}
 		
 		public function get_resolution() {
 			
 			// read settings from register
-			$settings = str_pad( base_convert( $this->read_register( $this->ctrl_reg4 ), 16, 2 ), 8, 0, STR_PAD_LEFT );
+			$settings = str_pad( base_convert( $this->I2c->read_register( self::ctrl_reg4 ), 16, 2 ), 8, 0, STR_PAD_LEFT );
 			
 			// get resolution bits and translate them
 			$resolution = substr( $settings, 2, 2 );
@@ -92,16 +93,16 @@
 			$this->resolution = $resolution;
 			
 			// update the settings on the lsm303
-			$settings = str_pad( base_convert( $this->read_register( $this->ctrl_reg4 ), 16, 2 ), 8, 0, STR_PAD_LEFT );
+			$settings = str_pad( base_convert( $this->I2c->read_register( self::ctrl_reg4 ), 16, 2 ), 8, 0, STR_PAD_LEFT );
 			$settings = substr( $settings, 0, 2 ) . $value . substr( $settings, 4, 4 );
-			$this->write_register( $this->ctrl_reg4, base_convert( $settings, 2, 10 ) );
+			$this->I2c->write_register( self::ctrl_reg4, base_convert( $settings, 2, 10 ) );
 			
 		}
 		
 		public function get_acceleration() {
-			$accel['x'] = $this->read_signed_short( $this->out_x_h ) / ( $this->resolution_marks / $this->resolution );
-			$accel['y'] = $this->read_signed_short( $this->out_y_h ) / ( $this->resolution_marks / $this->resolution );
-			$accel['z'] = $this->read_signed_short( $this->out_z_h ) / ( $this->resolution_marks / $this->resolution );
+			$accel['x'] = $this->I2c->read_signed_short( self::out_x_h ) / ( self::resolution_marks / $this->resolution );
+			$accel['y'] = $this->I2c->read_signed_short( self::out_y_h ) / ( self::resolution_marks / $this->resolution );
+			$accel['z'] = $this->I2c->read_signed_short( self::out_z_h ) / ( self::resolution_marks / $this->resolution );
 			$this->acceleration = $accel;
 			return $this->acceleration;
 		}
