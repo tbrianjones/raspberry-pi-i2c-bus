@@ -6,12 +6,6 @@ TBJs Raspberry Pi PHP Tools
 problems, bugs, and dev notes
 -----------------------------
 - not sure how to trigger the accelerometer to start producing data. i currently need to trigger it with a third party c app ( ../LSM303DLHC/LSM303 ).
-- change naming convention in classes to follow read/write to boards, and get/set within classes
-- rewrite read long, short, byte so they only require the first register location, msb
-	- the rest can be inferred and follow the msb )
-	- change names so they are all by type ( short => 16bit, long => 24bit )
-- consider rewriting library so the peripherals instantiate the i2c bus class within them, instead of extending it
-	- see adafruit's python library( i2c and bmp085 ): https://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code
 
 
 notes about using this library
