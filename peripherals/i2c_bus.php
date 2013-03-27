@@ -9,11 +9,15 @@
 	class i2c_bus
 	{
 		
-		private $block = 1; 				// the i2c block ( 0 on first gen rpi's, 1 on subsequnet rpi's )
-		protected $slave_i2c_register;		// the i2c bus address of the unit being communicated with ( set in a child class )
+		private $block = 1; 	// the i2c block ( 0 on first gen rpi's, 1 on subsequnet rpi's )
+		private $i2c_address;	// the i2c bus address of the unit being communicated with ( set when instantiated )
 		
-		function __construct() {
-						
+		function __construct(
+			$i2c_address // the i2c address of the device we're communicating with
+		) {
+			
+			$this->i2c_address = $i2c_address;
+			
 			///$this->i2c = fopen( '/dev/i2c-' . $this->block, "w+b" );
 			
 			/*	// read
@@ -41,13 +45,13 @@
 	// --- READERS --------------------------------------------------------------------
 	
 		
-		protected function read_register(
+		public function read_register(
 			$register	// register location ( eg. 0x29 )
 		) {
-			return trim( shell_exec( 'i2cget -y ' . $this->block . ' ' . $this->slave_i2c_register . ' ' . $register ) );
+			return trim( shell_exec( 'i2cget -y ' . $this->block . ' ' . $this->i2c_address . ' ' . $register ) );
 		}
 				
-		protected function read_signed_short(
+		public function read_signed_short(
 			$msb_register	// most significant byte register location
 		) {
 			$msb = intval( $this->read_register( $msb_register ), 16 );
@@ -58,7 +62,7 @@
 			return $decimal_value;
 		}
 		
-		protected function read_unsigned_short(
+		public function read_unsigned_short(
 			$msb_register	// most significant byte register location
 		) {
 			$msb = intval( $this->read_register( $msb_register ), 16 );
@@ -69,7 +73,7 @@
 			return $decimal_value;
 		}
 		
-		protected function read_unsigned_long(
+		public function read_unsigned_long(
 			$msb_register	// most significant byte register location
 		) {
 			$msb = intval( $this->read_register( $msb_register ), 16 );
@@ -85,11 +89,11 @@
 	// --- WRITERS --------------------------------------------------------------------
 	
 		
-		protected function write_register(
+		public function write_register(
 			$register,	// register address ( eg. 0x29 )
 			$value		// value to set at register address ( must be a decimal value, eg. 10001001 should be passed as 
 		) {
-			shell_exec( 'i2cset -y ' . $this->block . ' ' . $this->slave_i2c_register . ' ' . $register . ' ' . $value );
+			shell_exec( 'i2cset -y ' . $this->block . ' ' . $this->i2c_address . ' ' . $register . ' ' . $value );
 		}
 
 		
