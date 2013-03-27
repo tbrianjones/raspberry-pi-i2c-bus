@@ -11,6 +11,9 @@
 	//	- embedded on the adafruit BMP085 board: http://www.adafruit.com/products/391
 	//
 	//	DEV NOTES
+	//		- this class should be rewritten to get temp seperately from pressure as the
+	//			datasheet says temp should only be requested once a second, when measuring
+	//			pressure at a high rate.
 	//		- uses default operation mode ( standard = 1 ), not sure how to change this
 	//		- temperature works
 	//		- pressure does not work ( and, as a result, altitude )
