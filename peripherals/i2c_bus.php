@@ -80,7 +80,7 @@
 			$lsb = intval( $this->read_register( $msb_register + 1 ), 16 );
 			$xlsb = intval( $this->read_register( $msb_register + 2 ), 16 );
 			$val = ( $msb << 16 ) + ( $lsb << 8 ) + $xlsb;
-			$array = unpack( 'S', pack( 'v', $val ) );
+			$array = unpack( 'l', pack( 'V', $val ) );
 			$decimal_value = $array[1];
 			return $decimal_value;
 		}
